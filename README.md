@@ -1,3 +1,5 @@
 # CoziPetz
 
 Swagger UI Docs: http://localhost:8080/swagger-ui.html
+
+running from intellij:  mvn clean spring-boot:run
