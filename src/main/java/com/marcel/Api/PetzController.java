@@ -72,22 +72,15 @@ public class PetzController {
         return createPets.stream().map(Pet::getId).map(UUID::toString).collect(Collectors.toList());
     }
 
-
-
-
     @VisibleForTesting
     void updatePet(Pet updatePet) {
-        pets.stream().filter(pet -> pet.getId().equals(updatePet.getId()))
-//this stuff don't work
-
-                .flatMap(pet -> {
-                    Option.of(updatePet.getName()).peek(pet::setDescription);
-                    Option.of(updatePet.getType()).peek(pet::setDescription);
-                    Option.of(updatePet.getSex()).peek(pet::setDescription);
+        pets.stream().filter(pet -> pet.getId().equals(updatePet.getId())).findFirst().ifPresent(pet -> {
+                    Option.of(updatePet.getName()).peek(pet::setName);
+                    Option.of(updatePet.getType()).peek(pet::setType);
+                    Option.of(updatePet.getSex()).peek(pet::setSex);
                     Option.of(updatePet.getDescription()).peek(pet::setDescription);
-                    Option.of(updatePet.getOwnerEmail()).peek(pet::setDescription);
-                    Option.of(updatePet.getImageUrl()).peek(pet::setDescription);
-                    return null;
+                    Option.of(updatePet.getOwnerEmail()).peek(pet::setOwnerEmail);
+                    Option.of(updatePet.getImageUrl()).peek(pet::setImageUrl);
                 });
     }
 }
