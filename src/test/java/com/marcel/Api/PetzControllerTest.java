@@ -53,7 +53,7 @@ class PetzControllerTest {
                 .name("something")
                 .build();
         final String expectedName = "something";
-        final List<String> ids = controller.createPets(ImmutableList.of(pet, pet, pet, pet, pet)).subList(0,2);
+        final List<String> ids = controller.createPets(ImmutableList.of(pet, pet, pet, pet, pet)).subList(0, 2);
         //when
         controller.deletePetsEndpoint(ids);
         //then
@@ -96,5 +96,93 @@ class PetzControllerTest {
         assertThat(controller.pets).hasSize(1);
         assertThat(controller.pets.get(0).getName()).isEqualTo(updatedPet.getName());
         assertThat(controller.pets.get(0).getDescription()).isEqualTo(updatedPet.getDescription());
+    }
+
+    @Test
+    void findOne() {
+        //given
+        final Pet birdPet = Pet.builder()
+                .id(UUID.randomUUID())
+                .name("leatherface")
+                .type("bird")
+                .sex("f")
+                .description("it's a bird, what'd you expect")
+                .ownerEmail("birdlover@gmail.com")
+                .imageUrl("http://datBird.com/Mybird3")
+                .build();
+        final Pet dogPet = Pet.builder()
+                .id(UUID.randomUUID())
+                .name("rex")
+                .type("dog")
+                .sex("f")
+                .description("it's a dog, a magnificent beast")
+                .ownerEmail("birdlover@gmail.com")
+                .imageUrl("http://datBird.com/Mydog1")
+                .build();
+        final Pet searchCriteria = Pet.builder()
+                .name("leatherface")
+                .type("bird")
+                .build();
+        controller.pets.addAll(ImmutableList.of(birdPet, dogPet));
+        //when
+        final List<Pet> foundPets = controller.searchPetsEndpoint(searchCriteria);
+        //then
+        assertThat(foundPets).hasSize(1);
+        assertThat(foundPets.get(0).getName()).isEqualTo(birdPet.getName());
+    }
+
+    @Test
+    void findMultiple() {
+        //given
+        final Pet birdPet = Pet.builder()
+                .id(UUID.randomUUID())
+                .name("leatherface")
+                .type("bird")
+                .sex("f")
+                .description("it's a bird, what'd you expect")
+                .ownerEmail("birdlover@gmail.com")
+                .imageUrl("http://datBird.com/Mybird3")
+                .build();
+        final Pet dogPet = Pet.builder()
+                .id(UUID.randomUUID())
+                .name("rex")
+                .type("dog")
+                .sex("f")
+                .description("it's a dog, a magnificent beast")
+                .ownerEmail("birdlover@gmail.com")
+                .imageUrl("http://datBird.com/Mydog1")
+                .build();
+        final Pet searchCriteria = Pet.builder()
+                .sex("f")
+                .build();
+        controller.pets.addAll(ImmutableList.of(birdPet, dogPet));
+        //when
+        final List<Pet> foundPets = controller.searchPetsEndpoint(searchCriteria);
+        //then
+        assertThat(foundPets).hasSize(2);
+        assertThat(foundPets.get(0).getName()).isEqualTo(birdPet.getName());
+        assertThat(foundPets.get(1).getName()).isEqualTo(dogPet.getName());
+    }
+
+    @Test
+    void findNone() {
+        //given
+        final Pet birdPet = Pet.builder()
+                .id(UUID.randomUUID())
+                .name("leatherface")
+                .type("bird")
+                .sex("f")
+                .description("it's a bird, what'd you expect")
+                .ownerEmail("birdlover@gmail.com")
+                .imageUrl("http://datBird.com/Mybird3")
+                .build();
+        final Pet searchCriteria = Pet.builder()
+                .name("dog")
+                .build();
+        controller.pets.add(birdPet);
+        //when
+        final List<Pet> foundPets = controller.searchPetsEndpoint(searchCriteria);
+        //then
+        assertThat(foundPets).hasSize(0);
     }
 }

@@ -5,9 +5,7 @@ import com.marcel.Api.Model.Pet;
 import io.vavr.control.Option;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("UnusedReturnValue")
@@ -51,10 +49,18 @@ public class PetzController {
                 .forEach(this::updatePet);
     }
 
-    //NOT COMPLETE
     @GetMapping("/searchPets")
-    List<Pet> searchPetsEndpoint() {
-        return pets;
+    List<Pet> searchPetsEndpoint(Pet searchCriteria) {
+        final Dictionary foundPets = new Hashtable();
+        Option.of(searchCriteria.getId()).peek(id -> pets.stream().filter(pet -> pet.id.equals(id)).forEach(pet -> foundPets.put(pet.id, pet)));
+        Option.of(searchCriteria.getId()).peek(id -> pets.stream().filter(pet -> pet.id.equals(id)).forEach(pet -> foundPets.put(pet.id, pet)));
+        Option.of(searchCriteria.getName()).peek(name -> pets.stream().filter(pet -> pet.name.equals(name)).forEach(pet -> foundPets.put(pet.id, pet)));
+        Option.of(searchCriteria.getType()).peek(type -> pets.stream().filter(pet -> pet.type.equals(type)).forEach(pet -> foundPets.put(pet.id, pet)));
+        Option.of(searchCriteria.getSex()).peek(sex -> pets.stream().filter(pet -> pet.sex.equals(sex)).forEach(pet -> foundPets.put(pet.id, pet)));
+        Option.of(searchCriteria.getDescription()).peek(description -> pets.stream().filter(pet -> pet.description.equals(description)).forEach(pet -> foundPets.put(pet.id, pet)));
+        Option.of(searchCriteria.getOwnerEmail()).peek(ownerEmail -> pets.stream().filter(pet -> pet.ownerEmail.equals(ownerEmail)).forEach(pet -> foundPets.put(pet.id, pet)));
+        Option.of(searchCriteria.getImageUrl()).peek(imageUrl -> pets.stream().filter(pet -> pet.imageUrl.equals(imageUrl)).forEach(pet -> foundPets.put(pet.id, pet)));
+        return Collections.list(foundPets.elements());
     }
 
     @VisibleForTesting
@@ -75,12 +81,12 @@ public class PetzController {
     @VisibleForTesting
     void updatePet(Pet updatePet) {
         pets.stream().filter(pet -> pet.getId().equals(updatePet.getId())).findFirst().ifPresent(pet -> {
-                    Option.of(updatePet.getName()).peek(pet::setName);
-                    Option.of(updatePet.getType()).peek(pet::setType);
-                    Option.of(updatePet.getSex()).peek(pet::setSex);
-                    Option.of(updatePet.getDescription()).peek(pet::setDescription);
-                    Option.of(updatePet.getOwnerEmail()).peek(pet::setOwnerEmail);
-                    Option.of(updatePet.getImageUrl()).peek(pet::setImageUrl);
-                });
+            Option.of(updatePet.getName()).peek(pet::setName);
+            Option.of(updatePet.getType()).peek(pet::setType);
+            Option.of(updatePet.getSex()).peek(pet::setSex);
+            Option.of(updatePet.getDescription()).peek(pet::setDescription);
+            Option.of(updatePet.getOwnerEmail()).peek(pet::setOwnerEmail);
+            Option.of(updatePet.getImageUrl()).peek(pet::setImageUrl);
+        });
     }
 }
